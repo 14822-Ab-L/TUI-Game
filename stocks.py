@@ -25,41 +25,63 @@ headings = [
     ("Change last turn", 100)
 ]
 stock_buy = [
-    "Bombs R US: + || -",
-    "Medicine INC + || -",
-    "Fast Cars 4 U + || -",
-    "AI Overlords + || -",
-    "Crypto Bros + || -"
+    "+ || -",
+    "+ || -",
+    "+ || -",
+    "+ || -",
+    "+ || -"
 ]
 stock_own = [
-    "Bombs R US: 0",
-    "Medicine INC: 11",
-    "Fast Cars 4 U: 123",
-    "AI Overlords:7",
-    "Crypto Bros: 212"
+    ": 0",
+    ": 11",
+    ": 123",
+    ": 7",
+    ": 212"
 ]
 stock_avg = [
-    "Bombs R US: 93$",
-    "Medicine INC: 122$",
-    "Fast Cars 4 U: 10$",
-    "AI Overlords: 72:",
-    "Crypto Bros: 31$"
+    ": 93$",
+    ": 122$",
+    ": 10$",
+    ": 72:",
+    ": 31$"
 ]
 stock_current = [
-    "Bombs R US: 100$",
-    "Medicine INC: 100$",
-    "Fast Cars 4 U: 100$",
-    "AI Overlords: 100$",
-    "Crypto Bros: 100$"
+    ": 100$",
+    ": 100$",
+    ": 100$",
+    ": 100$",
+    ": 100$"
 ]
 stock_last = [
-    "Bombs R US: 11%",
-    "Medicine INC: -11%",
-    "Fast Cars 4 U: -12%",
-    "AI Overlords: 122%",
-    "Crypto Bros: 1000%"
+    ": 11%",
+    ": -11%",
+    ": -12%",
+    ": 122%",
+    ": 1000%"
+]
+news_menu = [
+    ("Todays news:", 2),
+    ("Place holder:", 40),
+    ("Logo here?", 100)
+]
+stories = [
+    "blah blah blah, blah blah blah , blah blah blah || blah blah blah"
 ]
 
+settings_list = [
+    "Settings",
+    "Save Game",
+    "Load Game",
+    "Exit Game"
+]
+
+end_game_button = [
+    "END DAY HERE BUTTON"
+]
+
+meme_logo_list = [
+    "ASCII LOGO HERE"
+]
 
 #basic stocks list function, cycles through the list and prints it to the window.
 def stocks(stock_list, window, start_row, start_col):
@@ -96,5 +118,21 @@ def stockcurrent(stock_current, window, start_row, start_col):
 
 def stocklast(stock_last, window, start_row, start_col):
     for index, string in enumerate(stock_last):
+        window.addstr(start_row + index, start_col, string)
+
+def newsmenu(news_menu , window, start_row, start_col):
+    for index, string in enumerate(news_menu):
+        window.addstr(start_row + index, start_col, string)
+
+def newsstories(stories , window, start_row, start_col):
+    for index, string in enumerate(stories):
+        window.addstr(start_row + index, start_col, string)
+
+def settings(settings_list , window, start_row, start_col):
+    for index, string in enumerate(settings_list):
+        window.addstr(start_row + index, start_col, string)
+
+def endgamebutton(end_game_button , window, start_row, start_col):
+    for index, string in enumerate(end_game_button):
         window.addstr(start_row + index, start_col, string)
 

@@ -21,6 +21,11 @@ def main(window: curses.window):
         stocks.stockcurrent(stocks.stock_current, window, start_row=5, start_col=80)
         stocks.stocklast(stocks.stock_last, window, start_row=5, start_col=100)
         stocks.draw_headings(stocks.headings, window, row=3)
+        stocks.draw_headings(stocks.news_menu, window, row=13)
+        stocks.newsstories(stocks.stories, window, start_row=15, start_col=2)
+        stocks.settings(stocks.settings_list, window, start_row=21, start_col=2)
+        stocks.endgamebutton(stocks.end_game_button, window, start_row=22, start_col=25)
+        stocks.stocks(stocks.meme_logo_list, window, start_row=21, start_col=85)
 
 if __name__ == '__main__':
     curses.wrapper(main) # Initialise and return the window to main()
