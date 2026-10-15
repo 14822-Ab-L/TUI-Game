@@ -136,7 +136,20 @@ def endgamebutton(end_game_button , window, start_row, start_col):
     for index, string in enumerate(end_game_button):
         window.addstr(start_row + index, start_col, string)
 
+def title_screen(window): # title screen for game
+    scr = curses.initscr()
+    window.clear()
+    window.addstr(20, 20 ,"Welcome to stonks game")  # title
+    window.addstr(25,25,"Press enter to continue") # prompt for enter key
+    window.refresh()
+    while True:
+        key = window.getch()
+        if key == 10:
+            return key
+        else:
+            pass
 def draw_dashboard(window):
+
     window.box()
 
     stats(stats_list, window, start_row=1, start_col=1)

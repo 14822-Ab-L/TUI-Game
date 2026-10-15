@@ -6,6 +6,12 @@ def main(window: curses.window):
     curses.curs_set(0) # Set cursor visibility
     curses.cbreak() # Turn off buffered input
 
+    #stats example
+    stats_list = ["------------------------------------------------------------------------------",
+                  "|Name: Albert         Current debt:-10000     Date: 1/10/2026                 |",
+                  "-------------------------------------------------------------------------------"]
+    for index, string in enumerate(stats_list):
+        window.addstr(index, 0, string)
     #stock example
     stock_list = ["--------------------------",
                   "|      Stock  1          |",
@@ -16,15 +22,15 @@ def main(window: curses.window):
                   "--------------------------"]
 
     for index, string in enumerate(stock_list):
-        window.addstr(index, 0, string)
+        window.addstr(index, 0, string,)
 
     #Buy/sell option
     BuySell_list = ["--------------------------",
-                  "|     Stock 1  +  -      |",
-                  "|     Stock 2  +  -      |",
-                  "|     Stock 3  +  -      |",
-                  "|     Stock 4  +  -      |",
-                  "|     Stock 5  +  -      |",
+                  "|     Stock 1  [+]  [-]      |",
+                  "|     Stock 2  [+]  [-]      |",
+                  "|     Stock 3  [+]  [-]      |",
+                  "|     Stock 4  [+]  [-]      |",
+                  "|     Stock 5  [+]  [-]      |",
                   "--------------------------"]
     for index, string in enumerate(BuySell_list):
         window.addstr(index, 26, string)

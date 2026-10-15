@@ -9,11 +9,9 @@ def main(window: curses.window):
 
 
     while 1: # Loop so the game doesn't exit instantly
-        curses.newwin(0, 50)
         window.box()
         terminal_ui.draw_dashboard(window) # Calls the UI
         window.refresh() # Refresh
 
 if __name__ == '__main__':
     curses.wrapper(main) # Initialise and return the window to main()
-
