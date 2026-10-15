@@ -1,20 +1,11 @@
 import curses
-
+import playerstats
 stock_list = [
     "Bombs R US",
     "Medicine INC",
     "Fast Cars 4 U",
     "AI Overlords",
     "Crypto Bros"
-]
-
-stats_list = [
-    "Name: Albert S",
-    "Date: 13/10/2026",
-    "Current balance: 1000$",
-    "Net Worth: -33000$",
-    "Debt: 34000",
-    "Turns left: 9"
 ]
 headings = [
     ("Stocks", 2),
@@ -92,9 +83,9 @@ def stocks(stock_list, window, start_row, start_col):
 #Everything below here is placeholder for UI purposes.
 
 #Stealing from above to print out stats for UI purposes.
-def stats(stats_list, window, start_row, start_col):
-    stats_line = " | ".join(stats_list)
-    window.addstr(start_row, start_col, stats_line)
+#def stats(stats_list, window, start_row, start_col):
+   #stats_line = " | ".join(stats_list)
+    #window.addstr(start_row, start_col, stats_line)
 
 def draw_headings(headings, window, row):
     for label, column in headings:
@@ -136,23 +127,9 @@ def endgamebutton(end_game_button , window, start_row, start_col):
     for index, string in enumerate(end_game_button):
         window.addstr(start_row + index, start_col, string)
 
-def title_screen(window): # title screen for game
-    scr = curses.initscr()
-    window.clear()
-    window.addstr(20, 20 ,"Welcome to stonks game")  # title
-    window.addstr(25,25,"Press enter to continue") # prompt for enter key
-    window.refresh()
-    while True:
-        key = window.getch()
-        if key == 10:
-            return key
-        else:
-            pass
 def draw_dashboard(window):
 
     window.box()
-
-    stats(stats_list, window, start_row=1, start_col=1)
     stocks(stock_list, window, start_row=5, start_col=2)
     stockbuy(stock_buy, window, start_row=5, start_col=20)
     stockown(stock_own, window, start_row=5, start_col=40)
