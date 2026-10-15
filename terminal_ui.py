@@ -65,7 +65,8 @@ news_menu = [
     ("Logo here?", 100)
 ]
 stories = [
-    "blah blah blah, blah blah blah , blah blah blah || blah blah blah"
+    ("blah blah blah"),
+    ("test test test")
 ]
 
 settings_list = [
@@ -149,8 +150,9 @@ def draw_dashboard(window):
 
     draw_headings(headings, window, row=3)
     draw_headings(news_menu, window, row=13)
-    newsstories(stories, window, start_row=15, start_col=2)
 
     settings(settings_list, window, start_row=21, start_col=2)
     endgamebutton(end_game_button, window, start_row=22, start_col=25)
     stocks(meme_logo_list, window, start_row=21, start_col=85)
+
+    newsstories(stories, window, start_row=15, start_col=2)

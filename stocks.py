@@ -65,7 +65,8 @@ news_menu = [
     ("Logo here?", 100)
 ]
 stories = [
-    "blah blah blah, blah blah blah , blah blah blah || blah blah blah"
+    ("blah blah blah"),
+    ("test test test")
 ]
 
 settings_list = [

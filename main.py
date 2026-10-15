@@ -1,11 +1,16 @@
 import curses
 import terminal_ui
+import news_banner
+import time
+
 
 def main(window: curses.window):
     window.keypad(True) # Turn on keypad mode
     curses.noecho() # Turn off key echoing
     curses.curs_set(0) # Set cursor visibility
     curses.cbreak() # Turn off buffered input
+    window.nodelay(True)
+    window.timeout(100)
 
 
     while 1: # Loop so the game doesn't exit instantly
