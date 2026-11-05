@@ -1,12 +1,15 @@
+import stocks
 import curses
-import playerstats
-stock_list = [
-    "Bombs R US",
-    "Medicine INC",
-    "Fast Cars 4 U",
-    "AI Overlords",
-    "Crypto Bros"
+
+
+stats_list = [
+    "Name: Player 1",
+    "Current balance: $1000.00",
+    "Net Worth: $1000.00",
+    "Debt: $0.00",
+    "Turns left: 10"
 ]
+
 headings = [
     ("Stocks", 2),
     ("Buy/Sell", 20),
@@ -15,6 +18,7 @@ headings = [
     ("Current price", 80),
     ("Change last turn", 100)
 ]
+
 stock_buy = [
     "+ || -",
     "+ || -",
@@ -22,41 +26,15 @@ stock_buy = [
     "+ || -",
     "+ || -"
 ]
-stock_own = [
-    ": 0",
-    ": 11",
-    ": 123",
-    ": 7",
-    ": 212"
-]
-stock_avg = [
-    ": 93$",
-    ": 122$",
-    ": 10$",
-    ": 72:",
-    ": 31$"
-]
-stock_current = [
-    ": 100$",
-    ": 100$",
-    ": 100$",
-    ": 100$",
-    ": 100$"
-]
-stock_last = [
-    ": 11%",
-    ": -11%",
-    ": -12%",
-    ": 122%",
-    ": 1000%"
-]
+
 news_menu = [
     ("Todays news:", 2),
     ("Place holder:", 40),
     ("Logo here?", 100)
 ]
+
 stories = [
-    "blah blah blah, blah blah blah , blah blah blah || blah blah blah"
+    "News stories will appear here."
 ]
 
 settings_list = [
@@ -74,73 +52,292 @@ meme_logo_list = [
     "ASCII LOGO HERE"
 ]
 
-#basic stocks list function, cycles through the list and prints it to the window.
+
+# Safely draw text within the terminal window.
+def draw_text(window, row, column, text):
+    height, width = window.getmaxyx()
+
+    if 0 <= row < height and 0 <= column < width - 1:
+        available_width = width - column - 1
+
+        window.addnstr(
+            row,
+            column,
+            str(text),
+            available_width
+        )
+
+
+# Displays a list of strings in the window.
 def stocks(stock_list, window, start_row, start_col):
     for index, string in enumerate(stock_list):
-        window.addstr(start_row + index, start_col, string)
-# start_row = Y axis, start_col = X axis.
+        draw_text(
+            window,
+            start_row + index,
+            start_col,
+            string
+        )
 
-#Everything below here is placeholder for UI purposes.
 
-#Stealing from above to print out stats for UI purposes.
-#def stats(stats_list, window, start_row, start_col):
-   #stats_line = " | ".join(stats_list)
-    #window.addstr(start_row, start_col, stats_line)
+# Displays the player statistics.
+def stats(stats_list, window, start_row, start_col):
+    stats_line = " | ".join(stats_list)
 
+    draw_text(
+        window,
+        start_row,
+        start_col,
+        stats_line
+    )
+
+
+# Displays the column headings.
 def draw_headings(headings, window, row):
     for label, column in headings:
-        window.addstr(row, column, label)
+        draw_text(window, row, column, label)
 
+
+# Displays the buy and sell placeholders.
 def stockbuy(stock_buy, window, start_row, start_col):
     for index, string in enumerate(stock_buy):
-        window.addstr(start_row + index, start_col, string)
+        draw_text(
+            window,
+            start_row + index,
+            start_col,
+            string
+        )
 
-def stockown(stock_own, window, start_row, start_col):
-    for index, string in enumerate(stock_own):
-        window.addstr(start_row + index, start_col, string)
 
-def stockavg(stock_avg, window, start_row, start_col):
-    for index, string in enumerate(stock_avg):
-        window.addstr(start_row + index, start_col, string)
+# Displays stock names from Stock objects.
+def stocknames(stock_list, window, start_row, start_col):
+    for index, stock in enumerate(stock_list):
+        draw_text(
+            window,
+            start_row + index,
+            start_col,
+            stock.stock_name
+        )
 
-def stockcurrent(stock_current, window, start_row, start_col):
-    for index, string in enumerate(stock_current):
-        window.addstr(start_row + index, start_col, string)
 
-def stocklast(stock_last, window, start_row, start_col):
-    for index, string in enumerate(stock_last):
-        window.addstr(start_row + index, start_col, string)
+# Displays the number of shares owned.
+def stockown(stock_list, window, start_row, start_col):
+    for index, stock in enumerate(stock_list):
+        draw_text(
+            window,
+            start_row + index,
+            start_col,
+            f": {stock.stock_owned}"
+        )
 
-def newsmenu(news_menu , window, start_row, start_col):
-    for index, string in enumerate(news_menu):
-        window.addstr(start_row + index, start_col, string)
 
-def newsstories(stories , window, start_row, start_col):
+# Displays the average purchase price.
+def stockavg(stock_list, window, start_row, start_col):
+    for index, stock in enumerate(stock_list):
+        draw_text(
+            window,
+            start_row + index,
+            start_col,
+            f": ${stock.avg_stock_price:.2f}"
+        )
+
+
+# Displays the current stock price.
+def stockcurrent(stock_list, window, start_row, start_col):
+    for index, stock in enumerate(stock_list):
+        draw_text(
+            window,
+            start_row + index,
+            start_col,
+            f": ${stock.current_price:.2f}"
+        )
+
+
+# Displays the price change from the previous turn.
+def stocklast(stock_list, window, start_row, start_col):
+    for index, stock in enumerate(stock_list):
+        draw_text(
+            window,
+            start_row + index,
+            start_col,
+            f": {stock.rate_change:+.2f}%"
+        )
+
+
+# Displays the news stories.
+def newsstories(stories, window, start_row, start_col):
     for index, string in enumerate(stories):
-        window.addstr(start_row + index, start_col, string)
+        draw_text(
+            window,
+            start_row + index,
+            start_col,
+            string
+        )
 
-def settings(settings_list , window, start_row, start_col):
+
+# Displays the settings menu.
+def settings(settings_list, window, start_row, start_col):
     for index, string in enumerate(settings_list):
-        window.addstr(start_row + index, start_col, string)
+        draw_text(
+            window,
+            start_row + index,
+            start_col,
+            string
+        )
 
-def endgamebutton(end_game_button , window, start_row, start_col):
+
+# Displays the end-day button placeholder.
+def endgamebutton(end_game_button, window, start_row, start_col):
     for index, string in enumerate(end_game_button):
-        window.addstr(start_row + index, start_col, string)
+        draw_text(
+            window,
+            start_row + index,
+            start_col,
+            string
+        )
 
-def draw_dashboard(window):
 
+def draw_dashboard(
+    window,
+    market,
+    logic,
+    selected_stock=0,
+    selected_action="buy",
+    trade_indicators=None
+):
+    """Draw the dashboard and highlight the selected control."""
+
+    window.erase()
     window.box()
-    stocks(stock_list, window, start_row=5, start_col=2)
-    stockbuy(stock_buy, window, start_row=5, start_col=20)
-    stockown(stock_own, window, start_row=5, start_col=40)
-    stockavg(stock_avg, window, start_row=5, start_col=60)
-    stockcurrent(stock_current, window, start_row=5, start_col=80)
-    stocklast(stock_last, window, start_row=5, start_col=100)
 
+    stock_list = list(market.stock_list.values())
+
+    current_stats = [
+        "Name: Player 1",
+        f"Current balance: ${logic.cash:,.2f}",
+        f"Net Worth: ${logic.net_worth():,.2f}",
+        f"Debt: ${logic.debt:,.2f}",
+        "Turns left: 10"
+    ]
+
+    stats(current_stats, window, start_row=1, start_col=1)
+
+    # Display stock information.
+    stocknames(stock_list, window, start_row=5, start_col=2)
+    stockbuy(stock_buy, window, start_row=5, start_col=20)
+    stockown(stock_list, window, start_row=5, start_col=40)
+    stockavg(stock_list, window, start_row=5, start_col=60)
+    stockcurrent(stock_list, window, start_row=5, start_col=80)
+    stocklast(stock_list, window, start_row=5, start_col=100)
+
+    # Display the last successful trade indicator.
+    if trade_indicators is None:
+        trade_indicators = [""] * len(stock_list)
+
+    for index, indicator in enumerate(trade_indicators):
+        draw_text(
+            window,
+            5 + index,
+            32,
+            indicator
+        )
+
+    # Display headings and news.
     draw_headings(headings, window, row=3)
     draw_headings(news_menu, window, row=13)
     newsstories(stories, window, start_row=15, start_col=2)
 
+    # Display settings and end-day placeholder.
     settings(settings_list, window, start_row=21, start_col=2)
-    endgamebutton(end_game_button, window, start_row=22, start_col=25)
+    endgamebutton(
+        end_game_button,
+        window,
+        start_row=22,
+        start_col=25
+    )
     stocks(meme_logo_list, window, start_row=21, start_col=85)
+
+    # Highlight the selected buy or sell control.
+    row = 5 + selected_stock
+    column = 20 if selected_action == "buy" else 25
+    label = "+" if selected_action == "buy" else "-"
+
+    height, width = window.getmaxyx()
+
+    if 0 <= row < height - 1 and 0 <= column < width - 1:
+        try:
+            window.addstr(row, column, label, curses.A_REVERSE)
+        except curses.error:
+            pass
+
+    window.refresh()
+
+
+def run_dashboard(window, market, logic):
+    """Handle keyboard input and run the trading dashboard."""
+
+    selected_stock = 0
+    selected_action = "buy"
+    stock_names = list(market.stock_list.keys())
+
+    trade_indicators = [""] * len(stock_names)
+    trade_message = ""
+
+    while True:
+        draw_dashboard(
+            window,
+            market,
+            logic,
+            selected_stock,
+            selected_action,
+            trade_indicators
+        )
+
+        # Display the latest trade result.
+        height, width = window.getmaxyx()
+
+        if height > 20 and width > 3:
+            window.addnstr(
+                19,
+                2,
+                trade_message.ljust(width - 3),
+                width - 3
+            )
+            window.refresh()
+
+        key = window.getch()
+
+        if key in (ord("q"), ord("Q")):
+            break
+
+        elif key == curses.KEY_UP:
+            selected_stock = (
+                selected_stock - 1
+            ) % len(stock_names)
+
+        elif key == curses.KEY_DOWN:
+            selected_stock = (
+                selected_stock + 1
+            ) % len(stock_names)
+
+        elif key == curses.KEY_LEFT:
+            selected_action = "buy"
+
+        elif key == curses.KEY_RIGHT:
+            selected_action = "sell"
+
+        elif key in (curses.KEY_ENTER, 10, 13):
+            stock_name = stock_names[selected_stock]
+
+            success, message = logic.trade(
+                selected_action,
+                stock_name,
+                1
+            )
+
+            trade_message = message
+
+            if success:
+                if selected_action == "buy":
+                    trade_indicators[selected_stock] = "↑"
+                else:
+                    trade_indicators[selected_stock] = "↓"
