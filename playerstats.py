@@ -1,5 +1,5 @@
 class Player:
-    def __init__ (self, name, date, balance, networth, debt, turns ):
+    def __init__ (self, name, date, balance, networth, debt, turns):
         self.name = name
         self.date = date
         self.balance = balance
@@ -10,9 +10,8 @@ class Player:
     def get_balance(self): # Returns the player's current balance
         return self.balance
 
-    def get_net_worth(self): # calcuate net worth based on balance and debt
-        networth = self.net_worth - self.debt + self.balance
-        return networth
+    def get_net_worth(self): # Returns the player's net worth
+        return self.networth
 
     def get_debt(self): # Returns the player's current debt
         return self.debt

@@ -1,6 +1,7 @@
 import curses
 import terminal_ui
 from stocks import Market, StockLogic
+from playerstats import Player
 
 def main(window: curses.window):
     """Run the TamaTUI application."""
@@ -11,8 +12,19 @@ def main(window: curses.window):
     curses.cbreak()
 
     market = Market()
-    logic = StockLogic(market)
 
+    """ Placeholder for player stats """
+    player = Player(
+    "Player 1",
+    "Day 1",
+    1000.0,
+    1000.0,
+    0.0,
+    10
+    )
+
+    logic = StockLogic(market, player)
+    
     terminal_ui.run_dashboard(window, market, logic)
 
 

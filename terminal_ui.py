@@ -211,12 +211,13 @@ def draw_dashboard(
 
     stock_list = list(market.stock_list.values())
 
+    """ Change to retrieve player logic """
     current_stats = [
-        "Name: Player 1",
-        f"Current balance: ${logic.cash:,.2f}",
+        f"Name: {logic.player.name}",
+        f"Current balance: ${logic.player.balance:,.2f}",
         f"Net Worth: ${logic.net_worth():,.2f}",
-        f"Debt: ${logic.debt:,.2f}",
-        "Turns left: 10"
+        f"Debt: ${logic.player.debt:,.2f}",
+        f"Turns left: {logic.player.turns}"
     ]
 
     stats(current_stats, window, start_row=1, start_col=1)

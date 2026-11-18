@@ -1,4 +1,3 @@
-
 import random
 
 
@@ -54,13 +53,11 @@ class StockLogic:
     def __init__(
         self,
         market,
-        cash=1000.0,
-        debt=0.0,
+        player,
         overdraft_limit=0.0
     ):
         self.market = market
-        self.cash = cash
-        self.debt = debt
+        self.player = player
         self.overdraft_limit = overdraft_limit
 
     def trade(self, action, stock_name, quantity):
@@ -78,7 +75,7 @@ class StockLogic:
         if action == "buy":
             total_cost = price * quantity
 
-            available_funds = self.cash + self.overdraft_limit
+            available_funds = self.player.balance + self.overdraft_limit
 
             if total_cost > available_funds:
                 return False, "Insufficient funds."
@@ -97,7 +94,7 @@ class StockLogic:
             )
 
             stock.stock_owned = new_quantity
-            self.cash -= total_cost
+            self.player.balance -= total_cost
 
             return True, (
                 f"Bought {quantity} shares of {stock_name}."
@@ -110,7 +107,7 @@ class StockLogic:
             total_sale = price * quantity
 
             stock.stock_owned -= quantity
-            self.cash += total_sale
+            self.player.balance += total_sale
 
             # Reset the average price if no shares remain.
             if stock.stock_owned == 0:
@@ -167,5 +164,7 @@ class StockLogic:
             stock.stock_owned * stock.current_price
             for stock in self.market.stock_list.values()
         )
+        
+        self.player.networth = (self.player.balance + holdings_value - self.player.debt)
 
-        return self.cash + holdings_value - self.debt
+        return self.player.networth
