@@ -1,29 +1,5 @@
-import curses
+import random
 
-stock_list = [
-    "Bombs R US",
-    "Medicine INC",
-    "Fast Cars 4 U",
-    "AI Overlords",
-    "Crypto Bros"
-]
-
-stats_list = [
-    "Name:Albert S "
-    "Date: 13/10/2026 "
-    "Current balance: 1000$"
-    "Net Worth: -33000$ "
-    "debt: 34000 "
-    "turns left: 9 "
-]
-headings = [
-    ("Stocks", 2),
-    ("Buy/Sell", 20),
-    ("Owned", 40),
-    ("Average buy price", 60),
-    ("Current price", 80),
-    ("Change last turn", 100)
-]
 stock_buy = [
     "+ || -",
     "+ || -",
@@ -31,108 +7,39 @@ stock_buy = [
     "+ || -",
     "+ || -"
 ]
-stock_own = [
-    ": 0",
-    ": 11",
-    ": 123",
-    ": 7",
-    ": 212"
-]
-stock_avg = [
-    ": 93$",
-    ": 122$",
-    ": 10$",
-    ": 72:",
-    ": 31$"
-]
-stock_current = [
-    ": 100$",
-    ": 100$",
-    ": 100$",
-    ": 100$",
-    ": 100$"
-]
-stock_last = [
-    ": 11%",
-    ": -11%",
-    ": -12%",
-    ": 122%",
-    ": 1000%"
-]
-news_menu = [
-    ("Todays news:", 2),
-    ("Place holder:", 40),
-    ("Logo here?", 100)
-]
-stories = [
-    "blah blah blah, blah blah blah , blah blah blah || blah blah blah"
-]
 
-settings_list = [
-    "Settings",
-    "Save Game",
-    "Load Game",
-    "Exit Game"
-]
+class Stock:
+    def __init__(self, stock_name, avg_stock_price, stock_owned, rate_change, current_price):
+        self.stock_name = stock_name
+        self.avg_stock_price = avg_stock_price
+        self.stock_owned = stock_owned
+        self.rate_change = rate_change
+        self.current_price = current_price
 
-end_game_button = [
-    "END DAY HERE BUTTON"
-]
 
-meme_logo_list = [
-    "ASCII LOGO HERE"
-]
+class Market:
+    def __init__(self):
+        self.stock_list = {
+            "Bombs R US": Stock("Bombs R US", 0, 0, 0, random.randint(50, 100)), 
+            "Medicine INC": Stock("Medicine INC", 0, 0, 0, random.randint(50, 100)),
+            "Fast Cars 4 U": Stock("Fast Cars 4 U", 0, 0, 0, random.randint(50, 100)),
+            "AI Overlords": Stock("AI Overlords", 0, 0, 0, random.randint(50, 100)),
+            "Crypto Bros": Stock("Crypto Bros",0, 0, 0, random.randint(50, 100))
+        }
 
-#basic stocks list function, cycles through the list and prints it to the window.
-def stocks(stock_list, window, start_row, start_col):
-    for index, string in enumerate(stock_list):
-        window.addstr(start_row + index, start_col, string)
-# start_row = Y axis, start_col = X axis.
+class StockLogic:
+    def trade(self):
+        # Buy and Sell stock function here
+        pass
 
-#Everything below here is placeholder for UI purposes.
+    def updateStock(self):
+        # Update Avg Stock 
+        # Update prices and calculate daily changes
+        # Update the percentage change in the stock (%)
+        pass
 
-#Stealing from above to print out stats for UI purposes.
-def stats(stats_list, window, start_row, start_col):
-    for index, string in enumerate(stats_list):
-        window.addstr(start_row + index, start_col, string)
+    def calcStock():
+        # Calculate percentage change from the old price.
+        pass
 
-def draw_headings(headings, window, row):
-    for label, column in headings:
-        window.addstr(row, column, label)
-
-def stockbuy(stock_buy, window, start_row, start_col):
-    for index, string in enumerate(stock_buy):
-        window.addstr(start_row + index, start_col, string)
-
-def stockown(stock_own, window, start_row, start_col):
-    for index, string in enumerate(stock_own):
-        window.addstr(start_row + index, start_col, string)
-
-def stockavg(stock_avg, window, start_row, start_col):
-    for index, string in enumerate(stock_avg):
-        window.addstr(start_row + index, start_col, string)
-
-def stockcurrent(stock_current, window, start_row, start_col):
-    for index, string in enumerate(stock_current):
-        window.addstr(start_row + index, start_col, string)
-
-def stocklast(stock_last, window, start_row, start_col):
-    for index, string in enumerate(stock_last):
-        window.addstr(start_row + index, start_col, string)
-
-def newsmenu(news_menu , window, start_row, start_col):
-    for index, string in enumerate(news_menu):
-        window.addstr(start_row + index, start_col, string)
-
-def newsstories(stories , window, start_row, start_col):
-    for index, string in enumerate(stories):
-        window.addstr(start_row + index, start_col, string)
-
-def settings(settings_list , window, start_row, start_col):
-    for index, string in enumerate(settings_list):
-        window.addstr(start_row + index, start_col, string)
-
-def endgamebutton(end_game_button , window, start_row, start_col):
-    for index, string in enumerate(end_game_button):
-        window.addstr(start_row + index, start_col, string)
-
+    
