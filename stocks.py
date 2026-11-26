@@ -1,138 +1,169 @@
-import curses
+import random
 
-stock_list = [
-    "Bombs R US",
-    "Medicine INC",
-    "Fast Cars 4 U",
-    "AI Overlords",
-    "Crypto Bros"
-]
+class Stock:
+    """Store information about one stock."""
 
-stats_list = [
-    "Name:Albert S "
-    "Date: 13/10/2026 "
-    "Current balance: 1000$"
-    "Net Worth: -33000$ "
-    "debt: 34000 "
-    "turns left: 9 "
-]
-headings = [
-    ("Stocks", 2),
-    ("Buy/Sell", 20),
-    ("Owned", 40),
-    ("Average buy price", 60),
-    ("Current price", 80),
-    ("Change last turn", 100)
-]
-stock_buy = [
-    "+ || -",
-    "+ || -",
-    "+ || -",
-    "+ || -",
-    "+ || -"
-]
-stock_own = [
-    ": 0",
-    ": 11",
-    ": 123",
-    ": 7",
-    ": 212"
-]
-stock_avg = [
-    ": 93$",
-    ": 122$",
-    ": 10$",
-    ": 72:",
-    ": 31$"
-]
-stock_current = [
-    ": 100$",
-    ": 100$",
-    ": 100$",
-    ": 100$",
-    ": 100$"
-]
-stock_last = [
-    ": 11%",
-    ": -11%",
-    ": -12%",
-    ": 122%",
-    ": 1000%"
-]
-news_menu = [
-    ("Todays news:", 2),
-    ("Place holder:", 40),
-    ("Logo here?", 100)
-]
-stories = [
-    "blah blah blah, blah blah blah , blah blah blah || blah blah blah"
-]
+    def __init__(
+        self,
+        stock_name,
+        avg_stock_price,
+        stock_owned,
+        rate_change,
+        current_price
+    ):
+        self.stock_name = stock_name
+        self.avg_stock_price = avg_stock_price
+        self.stock_owned = stock_owned
+        self.rate_change = rate_change
+        self.current_price = current_price
 
-settings_list = [
-    "Settings",
-    "Save Game",
-    "Load Game",
-    "Exit Game"
-]
 
-end_game_button = [
-    "END DAY HERE BUTTON"
-]
+class Market:
+    """Create and store the available stocks."""
 
-meme_logo_list = [
-    "ASCII LOGO HERE"
-]
+    def __init__(self):
+        self.stock_list = {
+            "Bombs R US": Stock(
+                "Bombs R US", 0.0, 0, 0.0,
+                float(random.randint(50, 100))
+            ),
+            "Medicine INC": Stock(
+                "Medicine INC", 0.0, 0, 0.0,
+                float(random.randint(50, 100))
+            ),
+            "Fast Cars 4 U": Stock(
+                "Fast Cars 4 U", 0.0, 0, 0.0,
+                float(random.randint(50, 100))
+            ),
+            "AI Overlords": Stock(
+                "AI Overlords", 0.0, 0, 0.0,
+                float(random.randint(50, 100))
+            ),
+            "Crypto Bros": Stock(
+                "Crypto Bros", 0.0, 0, 0.0,
+                float(random.randint(50, 100))
+            )
+        }
 
-#basic stocks list function, cycles through the list and prints it to the window.
-def stocks(stock_list, window, start_row, start_col):
-    for index, string in enumerate(stock_list):
-        window.addstr(start_row + index, start_col, string)
-# start_row = Y axis, start_col = X axis.
 
-#Everything below here is placeholder for UI purposes.
+class StockLogic:
+    """Handle trading, prices, cash and net worth."""
 
-#Stealing from above to print out stats for UI purposes.
-def stats(stats_list, window, start_row, start_col):
-    for index, string in enumerate(stats_list):
-        window.addstr(start_row + index, start_col, string)
+    def __init__(
+        self,
+        market,
+        player,
+        overdraft_limit=0.0
+    ):
+        self.market = market
+        self.player = player
+        self.overdraft_limit = overdraft_limit
 
-def draw_headings(headings, window, row):
-    for label, column in headings:
-        window.addstr(row, column, label)
+    def trade(self, action, stock_name, quantity):
+        """Buy or sell a specified number of shares."""
 
-def stockbuy(stock_buy, window, start_row, start_col):
-    for index, string in enumerate(stock_buy):
-        window.addstr(start_row + index, start_col, string)
+        if stock_name not in self.market.stock_list:
+            return False, "Stock not found."
 
-def stockown(stock_own, window, start_row, start_col):
-    for index, string in enumerate(stock_own):
-        window.addstr(start_row + index, start_col, string)
+        if not isinstance(quantity, int) or quantity <= 0:
+            return False, "Quantity must be a positive whole number."
 
-def stockavg(stock_avg, window, start_row, start_col):
-    for index, string in enumerate(stock_avg):
-        window.addstr(start_row + index, start_col, string)
+        stock = self.market.stock_list[stock_name]
+        price = stock.current_price
 
-def stockcurrent(stock_current, window, start_row, start_col):
-    for index, string in enumerate(stock_current):
-        window.addstr(start_row + index, start_col, string)
+        if action == "buy":
+            total_cost = price * quantity
 
-def stocklast(stock_last, window, start_row, start_col):
-    for index, string in enumerate(stock_last):
-        window.addstr(start_row + index, start_col, string)
+            available_funds = self.player.balance + self.overdraft_limit
 
-def newsmenu(news_menu , window, start_row, start_col):
-    for index, string in enumerate(news_menu):
-        window.addstr(start_row + index, start_col, string)
+            if total_cost > available_funds:
+                return False, "Insufficient funds."
 
-def newsstories(stories , window, start_row, start_col):
-    for index, string in enumerate(stories):
-        window.addstr(start_row + index, start_col, string)
+            old_quantity = stock.stock_owned
+            new_quantity = old_quantity + quantity
 
-def settings(settings_list , window, start_row, start_col):
-    for index, string in enumerate(settings_list):
-        window.addstr(start_row + index, start_col, string)
+            # Calculate the weighted average purchase price.
+            total_cost_basis = (
+                old_quantity * stock.avg_stock_price
+                + total_cost
+            )
 
-def endgamebutton(end_game_button , window, start_row, start_col):
-    for index, string in enumerate(end_game_button):
-        window.addstr(start_row + index, start_col, string)
+            stock.avg_stock_price = (
+                total_cost_basis / new_quantity
+            )
 
+            stock.stock_owned = new_quantity
+            self.player.balance -= total_cost
+
+            return True, (
+                f"Bought {quantity} shares of {stock_name}."
+            )
+
+        if action == "sell":
+            if quantity > stock.stock_owned:
+                return False, "Not enough shares to sell."
+
+            total_sale = price * quantity
+
+            stock.stock_owned -= quantity
+            self.player.balance += total_sale
+
+            # Reset the average price if no shares remain.
+            if stock.stock_owned == 0:
+                stock.avg_stock_price = 0.0
+
+            return True, (
+                f"Sold {quantity} shares of {stock_name}."
+            )
+
+        return False, "Invalid action. Use 'buy' or 'sell'."
+
+    def updateStock(self, changes=None):
+        """Apply percentage changes to stock prices.
+
+        Example:
+            {"Bombs R US": 10} increases that stock by 10%.
+        """
+
+        if changes is None:
+            changes = {}
+
+        for name, stock in self.market.stock_list.items():
+            old_price = stock.current_price
+            percentage_change = changes.get(name, 0.0)
+
+            new_price = old_price * (
+                1 + percentage_change / 100
+            )
+
+            # Temporary minimum stock price.
+            stock.current_price = max(0.01, new_price)
+
+            # Calculate the actual percentage change.
+            stock.rate_change = self.calcStock(
+                old_price,
+                stock.current_price
+            )
+
+    @staticmethod
+    def calcStock(old_price, new_price):
+        """Calculate percentage change between two prices."""
+
+        if old_price <= 0:
+            return 0.0
+
+        return (
+            (new_price - old_price) / old_price
+        ) * 100
+
+    def net_worth(self):
+        """Calculate cash plus stock value minus debt."""
+
+        holdings_value = sum(
+            stock.stock_owned * stock.current_price
+            for stock in self.market.stock_list.values()
+        )
+        
+        self.player.networth = (self.player.balance + holdings_value - self.player.debt)
+
+        return self.player.networth
