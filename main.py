@@ -2,7 +2,7 @@ import curses
 import terminal_ui
 import titlescreen
 import playerstats
-from dayscreens import dayscreen
+import dayscreens
 from stocks import Market, StockLogic
 from playerstats import Player
 
@@ -23,9 +23,9 @@ def main(window: curses.window):
 
 
     logic = StockLogic(market, player)
-
+    dayscreens.day_screen(window, 1, "The Beginning")
     terminal_ui.run_dashboard(window, market, logic)
-    dayscreen(window, 1, "The Beginning")  # Display the day screen for Day 1
+      # Display the day screen for Day 1
 
 
 if __name__ == "__main__":

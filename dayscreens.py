@@ -1,4 +1,4 @@
-def dayscreen(window, day_number, day_name):
+def day_screen(window, day_number, day_name):
     window.clear()
     window.addstr(2, 10, f"Day {day_number}: {day_name}")
     window.addstr(4, 10, "Press any key to continue...")
