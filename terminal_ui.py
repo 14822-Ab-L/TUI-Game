@@ -1,14 +1,8 @@
 import stocks
 import curses
 
+from timeline import Timeline
 
-stats_list = [
-    "Name: Player 1",
-    "Current balance: $1000.00",
-    "Net Worth: $1000.00",
-    "Debt: $0.00",
-    "Turns left: 10"
-]
 
 headings = [
     ("Stocks", 2),
@@ -211,7 +205,7 @@ def draw_dashboard(
 
     stock_list = list(market.stock_list.values())
 
-    """ Change to retrieve player logic """
+    # Retrieve the player's current statistics.
     current_stats = [
         f"Name: {logic.player.name}",
         f"Current balance: ${logic.player.balance:,.2f}",
@@ -242,13 +236,14 @@ def draw_dashboard(
             indicator
         )
 
-    # Display headings and news.
+    # Display column headings and news.
     draw_headings(headings, window, row=3)
     draw_headings(news_menu, window, row=13)
     newsstories(stories, window, start_row=15, start_col=2)
 
     # Display settings and end-day placeholder.
     settings(settings_list, window, start_row=21, start_col=2)
+
     endgamebutton(
         end_game_button,
         window,
@@ -258,17 +253,38 @@ def draw_dashboard(
     stocks(meme_logo_list, window, start_row=21, start_col=85)
 
     # Highlight the selected buy or sell control.
-    row = 5 + selected_stock
-    column = 20 if selected_action == "buy" else 25
-    label = "+" if selected_action == "buy" else "-"
+    if selected_stock < len(stock_list):
+        row = 5 + selected_stock
+        column = 20 if selected_action == "buy" else 25
+        label = "+" if selected_action == "buy" else "-"
 
-    height, width = window.getmaxyx()
+        height, width = window.getmaxyx()
 
-    if 0 <= row < height - 1 and 0 <= column < width - 1:
-        try:
-            window.addstr(row, column, label, curses.A_REVERSE)
-        except curses.error:
-            pass
+        if 0 <= row < height - 1 and 0 <= column < width - 1:
+            try:
+                window.addstr(row, column, label, curses.A_REVERSE)
+            except curses.error:
+                pass
+    
+    # Highlight the End Day button when selected.
+    else:
+        row = 22
+        column = 25
+        label = end_game_button[0]
+
+        height, width = window.getmaxyx()
+
+        if 0 <= row < height - 1 and 0 <= column < width - 1:
+            try:
+                window.addnstr(
+                    row,
+                    column,
+                    label,
+                    width - column - 1,
+                    curses.A_REVERSE
+                )
+            except curses.error:
+                pass
 
     window.refresh()
 
@@ -279,6 +295,15 @@ def run_dashboard(window, market, logic):
     selected_stock = 0
     selected_action = "buy"
     stock_names = list(market.stock_list.keys())
+
+    # End Day is the selection immediately after the last stock.
+    end_day_index = len(stock_names)
+
+    # Create the timeline once for the entire game.
+    timeline = Timeline(
+        total_turns=logic.player.turns,
+        current_turn=0
+    )
 
     trade_indicators = [""] * len(stock_names)
     trade_message = ""
@@ -307,38 +332,66 @@ def run_dashboard(window, market, logic):
 
         key = window.getch()
 
+        # Quit the dashboard.
         if key in (ord("q"), ord("Q")):
             break
 
+        # Move selection up.
         elif key == curses.KEY_UP:
             selected_stock = (
                 selected_stock - 1
-            ) % len(stock_names)
+            ) % (len(stock_names) + 1)
 
+        # Move selection down.
         elif key == curses.KEY_DOWN:
             selected_stock = (
                 selected_stock + 1
-            ) % len(stock_names)
+            ) % (len(stock_names) + 1)
 
+        # Select buy.
         elif key == curses.KEY_LEFT:
             selected_action = "buy"
 
+        # Select sell.
         elif key == curses.KEY_RIGHT:
             selected_action = "sell"
 
+        # Execute the selected action.
         elif key in (curses.KEY_ENTER, 10, 13):
-            stock_name = stock_names[selected_stock]
 
-            success, message = logic.trade(
-                selected_action,
-                stock_name,
-                1
-            )
+            # End Day option selected.
+            if selected_stock == end_day_index:
 
-            trade_message = message
+                if timeline.advance_day(logic.player):
+                    logic.net_worth()
 
-            if success:
-                if selected_action == "buy":
-                    trade_indicators[selected_stock] = "↑"
+                    if logic.player.turns == 0:
+                        trade_message = (
+                            f"Game finished on {logic.player.date}. ""0 turns remaining."
+                        )
+
+                    else: 
+                        trade_message = (
+                            f"Advanced to {logic.player.date}. "
+                            f"{logic.player.turns} turns remaining."
+                        )
                 else:
-                    trade_indicators[selected_stock] = "↓"
+                    trade_message = "No turns remaining."
+
+            # Stock selected.
+            else:
+                stock_name = stock_names[selected_stock]
+
+                success, message = logic.trade(
+                    selected_action,
+                    stock_name,
+                    1
+                )
+
+                trade_message = message
+
+                if success:
+                    if selected_action == "buy":
+                        trade_indicators[selected_stock] = "↑"
+                    else:
+                        trade_indicators[selected_stock] = "↓"
