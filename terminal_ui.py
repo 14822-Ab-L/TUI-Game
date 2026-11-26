@@ -1,5 +1,6 @@
 import stocks
 import curses
+from news import NewsBanner
 
 from timeline import Timeline
 
@@ -28,8 +29,13 @@ news_menu = [
 ]
 
 stories = [
-    "News stories will appear here."
+    "Market opens cautiously after overnight trading",
+    "Bombs R Us announces a surprise product launch",
+    "Local cat rescued from tree; shares remain unchanged",
+    "Analysts recommend watching the medical sector",
 ]
+
+news_banner = NewsBanner(stories, row=13, left=2, right=2)
 
 settings_list = [
     "Settings",
@@ -157,17 +163,6 @@ def stocklast(stock_list, window, start_row, start_col):
         )
 
 
-# Displays the news stories.
-def newsstories(stories, window, start_row, start_col):
-    for index, string in enumerate(stories):
-        draw_text(
-            window,
-            start_row + index,
-            start_col,
-            string
-        )
-
-
 # Displays the settings menu.
 def settings(settings_list, window, start_row, start_col):
     for index, string in enumerate(settings_list):
@@ -236,10 +231,9 @@ def draw_dashboard(
             indicator
         )
 
-    # Display column headings and news.
+    # Display column headings and the attached news banner.
     draw_headings(headings, window, row=3)
-    draw_headings(news_menu, window, row=13)
-    newsstories(stories, window, start_row=15, start_col=2)
+    news_banner.draw(window)
 
     # Display settings and end-day placeholder.
     settings(settings_list, window, start_row=21, start_col=2)
