@@ -1,15 +1,6 @@
 import stocks
 import curses
 
-
-stats_list = [
-    "Name: Player 1",
-    "Current balance: $1000.00",
-    "Net Worth: $1000.00",
-    "Debt: $0.00",
-    "Turns left: 10"
-]
-
 headings = [
     ("Stocks", 2),
     ("Buy/Sell", 20),
