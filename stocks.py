@@ -1,6 +1,5 @@
 import random
 
-
 class Stock:
     """Store information about one stock."""
 
