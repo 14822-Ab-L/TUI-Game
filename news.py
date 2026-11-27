@@ -88,7 +88,6 @@ class NewsBanner:
             pass
 
         loop_text = self.ticker_loop_text(self.notices)
-        # Create a continuous stream for seamless wrapping (3x copies)
         full_stream = loop_text * 3
         start = min(self.current_pos % len(loop_text), len(loop_text) - content_width)
         display_text = full_stream[start:start + content_width]

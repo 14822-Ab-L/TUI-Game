@@ -53,8 +53,8 @@ meme_logo_list = [
 ]
 
 
-# Safely draw text within the terminal window.
 def draw_text(window, row, column, text):
+    """Safely draw text within the terminal window."""
     height, width = window.getmaxyx()
 
     if 0 <= row < height and 0 <= column < width - 1:
@@ -68,8 +68,8 @@ def draw_text(window, row, column, text):
         )
 
 
-# Displays a list of strings in the window.
 def stocks(stock_list, window, start_row, start_col):
+    """Display a list of strings in the window."""
     for index, string in enumerate(stock_list):
         draw_text(
             window,
@@ -79,8 +79,8 @@ def stocks(stock_list, window, start_row, start_col):
         )
 
 
-# Displays the player statistics.
 def stats(stats_list, window, start_row, start_col):
+    """Display the player statistics."""
     stats_line = " | ".join(stats_list)
 
     draw_text(
@@ -91,14 +91,14 @@ def stats(stats_list, window, start_row, start_col):
     )
 
 
-# Displays the column headings.
 def draw_headings(headings, window, row):
+    """Display the column headings."""
     for label, column in headings:
         draw_text(window, row, column, label)
 
 
-# Displays the buy and sell placeholders.
 def stockbuy(stock_buy, window, start_row, start_col):
+    """Display the buy and sell placeholders."""
     for index, string in enumerate(stock_buy):
         draw_text(
             window,
@@ -108,8 +108,8 @@ def stockbuy(stock_buy, window, start_row, start_col):
         )
 
 
-# Displays stock names from Stock objects.
 def stocknames(stock_list, window, start_row, start_col):
+    """Display stock names from Stock objects."""
     for index, stock in enumerate(stock_list):
         draw_text(
             window,
@@ -119,8 +119,8 @@ def stocknames(stock_list, window, start_row, start_col):
         )
 
 
-# Displays the number of shares owned.
 def stockown(stock_list, window, start_row, start_col):
+    """Display the number of shares owned."""
     for index, stock in enumerate(stock_list):
         draw_text(
             window,
@@ -130,8 +130,8 @@ def stockown(stock_list, window, start_row, start_col):
         )
 
 
-# Displays the average purchase price.
 def stockavg(stock_list, window, start_row, start_col):
+    """Display the average purchase price."""
     for index, stock in enumerate(stock_list):
         draw_text(
             window,
@@ -141,8 +141,8 @@ def stockavg(stock_list, window, start_row, start_col):
         )
 
 
-# Displays the current stock price.
 def stockcurrent(stock_list, window, start_row, start_col):
+    """Display the current stock price."""
     for index, stock in enumerate(stock_list):
         draw_text(
             window,
@@ -152,8 +152,8 @@ def stockcurrent(stock_list, window, start_row, start_col):
         )
 
 
-# Displays the price change from the previous turn.
 def stocklast(stock_list, window, start_row, start_col):
+    """Display the price change from the previous turn."""
     for index, stock in enumerate(stock_list):
         draw_text(
             window,
@@ -163,8 +163,8 @@ def stocklast(stock_list, window, start_row, start_col):
         )
 
 
-# Displays the settings menu.
 def settings(settings_list, window, start_row, start_col):
+    """Display the settings menu."""
     for index, string in enumerate(settings_list):
         draw_text(
             window,
@@ -174,8 +174,8 @@ def settings(settings_list, window, start_row, start_col):
         )
 
 
-# Displays the end-day button placeholder.
 def endgamebutton(end_game_button, window, start_row, start_col):
+    """Display the end-day button placeholder."""
     for index, string in enumerate(end_game_button):
         draw_text(
             window,
@@ -200,7 +200,6 @@ def draw_dashboard(
 
     stock_list = list(market.stock_list.values())
 
-    # Retrieve the player's current statistics.
     current_stats = [
         f"Name: {logic.player.name}",
         f"Current balance: ${logic.player.balance:,.2f}",
@@ -211,7 +210,6 @@ def draw_dashboard(
 
     stats(current_stats, window, start_row=1, start_col=1)
 
-    # Display stock information.
     stocknames(stock_list, window, start_row=5, start_col=2)
     stockbuy(stock_buy, window, start_row=5, start_col=20)
     stockown(stock_list, window, start_row=5, start_col=40)
@@ -219,7 +217,6 @@ def draw_dashboard(
     stockcurrent(stock_list, window, start_row=5, start_col=80)
     stocklast(stock_list, window, start_row=5, start_col=100)
 
-    # Display the last successful trade indicator.
     if trade_indicators is None:
         trade_indicators = [""] * len(stock_list)
 
@@ -231,11 +228,9 @@ def draw_dashboard(
             indicator
         )
 
-    # Display column headings and the attached news banner.
     draw_headings(headings, window, row=3)
     news_banner.draw(window)
 
-    # Display settings and end-day placeholder.
     settings(settings_list, window, start_row=21, start_col=2)
 
     endgamebutton(
@@ -246,7 +241,6 @@ def draw_dashboard(
     )
     stocks(meme_logo_list, window, start_row=21, start_col=85)
 
-    # Highlight the selected buy or sell control.
     if selected_stock < len(stock_list):
         row = 5 + selected_stock
         column = 20 if selected_action == "buy" else 25
@@ -260,7 +254,6 @@ def draw_dashboard(
             except curses.error:
                 pass
     
-    # Highlight the End Day button when selected.
     else:
         row = 22
         column = 25
@@ -290,10 +283,8 @@ def run_dashboard(window, market, logic):
     selected_action = "buy"
     stock_names = list(market.stock_list.keys())
 
-    # End Day is the selection immediately after the last stock.
     end_day_index = len(stock_names)
 
-    # Create the timeline once for the entire game.
     timeline = Timeline(
         total_turns=logic.player.turns,
         current_turn=0
@@ -302,11 +293,9 @@ def run_dashboard(window, market, logic):
     trade_indicators = [""] * len(stock_names)
     trade_message = ""
 
-    # Enable 100ms timeout for getch to allow automatic scrolling
     window.timeout(100)
 
     while True:
-        # Update the news ticker scroll position
         news_banner.update()
         
         draw_dashboard(
@@ -318,7 +307,6 @@ def run_dashboard(window, market, logic):
             trade_indicators
         )
 
-        # Display the latest trade result.
         height, width = window.getmaxyx()
 
         if height > 20 and width > 3:
@@ -332,34 +320,27 @@ def run_dashboard(window, market, logic):
 
         key = window.getch()
 
-        # Quit the dashboard.
         if key in (ord("q"), ord("Q")):
             break
 
-        # Move selection up.
         elif key == curses.KEY_UP:
             selected_stock = (
                 selected_stock - 1
             ) % (len(stock_names) + 1)
 
-        # Move selection down.
         elif key == curses.KEY_DOWN:
             selected_stock = (
                 selected_stock + 1
             ) % (len(stock_names) + 1)
 
-        # Select buy.
         elif key == curses.KEY_LEFT:
             selected_action = "buy"
 
-        # Select sell.
         elif key == curses.KEY_RIGHT:
             selected_action = "sell"
 
-        # Execute the selected action.
         elif key in (curses.KEY_ENTER, 10, 13):
 
-            # End Day option selected.
             if selected_stock == end_day_index:
 
                 if timeline.advance_day(logic.player):
@@ -378,7 +359,6 @@ def run_dashboard(window, market, logic):
                 else:
                     trade_message = "No turns remaining."
 
-            # Stock selected.
             else:
                 stock_name = stock_names[selected_stock]
 

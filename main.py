@@ -13,7 +13,6 @@ def main(window: curses.window):
 
     market = Market()
 
-    """ Placeholder for player stats """
     player = Player(
     "Player 1",
     "Day 1",
