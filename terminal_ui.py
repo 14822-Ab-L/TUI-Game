@@ -302,7 +302,13 @@ def run_dashboard(window, market, logic):
     trade_indicators = [""] * len(stock_names)
     trade_message = ""
 
+    # Enable 100ms timeout for getch to allow automatic scrolling
+    window.timeout(100)
+
     while True:
+        # Update the news ticker scroll position
+        news_banner.update()
+        
         draw_dashboard(
             window,
             market,

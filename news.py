@@ -14,13 +14,15 @@ class NewsBanner:
     """A reusable news ticker"""
 
     def __init__(self, notices=None, row=13, left=1, right=1,
-                 title="TODAY'S NEWS", live=True):
+                 title="TODAY'S NEWS", live=True, scroll_speed=1):
         self.notices = list(notices) if notices is not None else list(DEFAULT_NOTICES)
         self.row = row
         self.left = left
         self.right = right
         self.title = title
         self.live = live
+        self.current_pos = 0
+        self.scroll_speed = scroll_speed
 
     def set_notices(self, notices):
         self.notices = list(notices)
@@ -33,6 +35,21 @@ class NewsBanner:
             f"{index + 1}. {notice}"
             for index, notice in enumerate(self.notices)
         )
+
+    @staticmethod
+    def ticker_loop_text(notices):
+        """Return text with a separator for seamless looping."""
+        result = "  ||  ".join(
+            f"{index + 1}. {notice}"
+            for index, notice in enumerate(notices)
+        )
+        return result + "   ***   "
+
+    def update(self):
+        """Advance the scroll position with seamless wrapping."""
+        full_text = self.ticker_loop_text(self.notices)
+        if full_text:
+            self.current_pos = (self.current_pos + self.scroll_speed) % len(full_text)
 
     @staticmethod
     def _safe_addnstr(window, row, column, text, width, attributes=0):
@@ -70,10 +87,21 @@ class NewsBanner:
         except curses.error:
             pass
 
-        self._safe_addnstr(
-            window, self.row + 2, self.left,
-            self.ticker_text(), content_width
-        )
+        loop_text = self.ticker_loop_text(self.notices)
+        # Create a continuous stream for seamless wrapping (3x copies)
+        full_stream = loop_text * 3
+        start = min(self.current_pos % len(loop_text), len(loop_text) - content_width)
+        display_text = full_stream[start:start + content_width]
+        if display_text:
+            self._safe_addnstr(
+                window, self.row + 2, self.left,
+                display_text, content_width
+            )
+        else:
+            self._safe_addnstr(
+                window, self.row + 2, self.left,
+                "", content_width
+            )
 
 
 def newsstories(stories, window, start_row, start_col):
