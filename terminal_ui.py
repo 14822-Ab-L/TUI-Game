@@ -1,4 +1,3 @@
-import stocks
 import curses
 from news import NewsBanner
 
@@ -20,12 +19,6 @@ stock_buy = [
     "+ || -",
     "+ || -",
     "+ || -"
-]
-
-news_menu = [
-    ("Todays news:", 2),
-    ("Place holder:", 40),
-    ("Logo here?", 100)
 ]
 
 stories = [
@@ -71,24 +64,14 @@ def draw_text(window, row, column, text):
 def stocks(stock_list, window, start_row, start_col):
     """Display a list of strings in the window."""
     for index, string in enumerate(stock_list):
-        draw_text(
-            window,
-            start_row + index,
-            start_col,
-            string
-        )
+        draw_text(window, start_row + index, start_col, string)
 
 
 def stats(stats_list, window, start_row, start_col):
     """Display the player statistics."""
     stats_line = " | ".join(stats_list)
 
-    draw_text(
-        window,
-        start_row,
-        start_col,
-        stats_line
-    )
+    draw_text(window, start_row, start_col, stats_line)
 
 
 def draw_headings(headings, window, row):
@@ -100,89 +83,49 @@ def draw_headings(headings, window, row):
 def stockbuy(stock_buy, window, start_row, start_col):
     """Display the buy and sell placeholders."""
     for index, string in enumerate(stock_buy):
-        draw_text(
-            window,
-            start_row + index,
-            start_col,
-            string
-        )
+        draw_text(window, start_row + index, start_col, string)
 
 
 def stocknames(stock_list, window, start_row, start_col):
     """Display stock names from Stock objects."""
     for index, stock in enumerate(stock_list):
-        draw_text(
-            window,
-            start_row + index,
-            start_col,
-            stock.stock_name
-        )
+        draw_text(window, start_row + index, start_col, stock.stock_name)
 
 
 def stockown(stock_list, window, start_row, start_col):
     """Display the number of shares owned."""
     for index, stock in enumerate(stock_list):
-        draw_text(
-            window,
-            start_row + index,
-            start_col,
-            f": {stock.stock_owned}"
-        )
+        draw_text(window, start_row + index, start_col, f": {stock.stock_owned}")
 
 
 def stockavg(stock_list, window, start_row, start_col):
     """Display the average purchase price."""
     for index, stock in enumerate(stock_list):
-        draw_text(
-            window,
-            start_row + index,
-            start_col,
-            f": ${stock.avg_stock_price:.2f}"
-        )
+        draw_text(window, start_row + index, start_col, f": ${stock.avg_stock_price:.2f}")
 
 
 def stockcurrent(stock_list, window, start_row, start_col):
     """Display the current stock price."""
     for index, stock in enumerate(stock_list):
-        draw_text(
-            window,
-            start_row + index,
-            start_col,
-            f": ${stock.current_price:.2f}"
-        )
+        draw_text(window, start_row + index, start_col, f": ${stock.current_price:.2f}")
 
 
 def stocklast(stock_list, window, start_row, start_col):
     """Display the price change from the previous turn."""
     for index, stock in enumerate(stock_list):
-        draw_text(
-            window,
-            start_row + index,
-            start_col,
-            f": {stock.rate_change:+.2f}%"
-        )
+        draw_text(window, start_row + index, start_col, f": {stock.rate_change:+.2f}%")
 
 
 def settings(settings_list, window, start_row, start_col):
     """Display the settings menu."""
     for index, string in enumerate(settings_list):
-        draw_text(
-            window,
-            start_row + index,
-            start_col,
-            string
-        )
+        draw_text(window, start_row + index, start_col, string)
 
 
 def endgamebutton(end_game_button, window, start_row, start_col):
     """Display the end-day button placeholder."""
     for index, string in enumerate(end_game_button):
-        draw_text(
-            window,
-            start_row + index,
-            start_col,
-            string
-        )
+        draw_text(window, start_row + index, start_col, string)
 
 
 def draw_dashboard(
@@ -253,7 +196,6 @@ def draw_dashboard(
                 window.addstr(row, column, label, curses.A_REVERSE)
             except curses.error:
                 pass
-    
     else:
         row = 22
         column = 25
@@ -297,7 +239,6 @@ def run_dashboard(window, market, logic):
 
     while True:
         news_banner.update()
-        
         draw_dashboard(
             window,
             market,
@@ -346,12 +287,15 @@ def run_dashboard(window, market, logic):
                 if timeline.advance_day(logic.player):
                     logic.net_worth()
 
+                    news_banner.pick_random_story()
+
                     if logic.player.turns == 0:
                         trade_message = (
-                            f"Game finished on {logic.player.date}. ""0 turns remaining."
+                            f"Game finished on {logic.player.date}. "
+                            "0 turns remaining."
                         )
 
-                    else: 
+                    else:
                         trade_message = (
                             f"Advanced to {logic.player.date}. "
                             f"{logic.player.turns} turns remaining."

@@ -1,4 +1,5 @@
 import curses
+import random
 
 
 DEFAULT_NOTICES = [
@@ -11,11 +12,12 @@ DEFAULT_NOTICES = [
 
 
 class NewsBanner:
-    """A reusable news ticker"""
+    """Display one randomly selected story as a scrolling ticker."""
 
     def __init__(self, notices=None, row=13, left=1, right=1,
                  title="TODAY'S NEWS", live=True, scroll_speed=1):
-        self.notices = list(notices) if notices is not None else list(DEFAULT_NOTICES)
+        source = DEFAULT_NOTICES if notices is None else notices
+        self.notices = list(source)
         self.row = row
         self.left = left
         self.right = right
@@ -23,31 +25,45 @@ class NewsBanner:
         self.live = live
         self.current_pos = 0
         self.scroll_speed = scroll_speed
+        self.current_story = random.choice(self.notices) if self.notices else ""
 
     def set_notices(self, notices):
+        """Replace the available stories and choose a new story."""
         self.notices = list(notices)
+        self.pick_random_story()
 
     def add_notice(self, notice):
+        """Add a story and choose a new story."""
         self.notices.append(str(notice))
+        self.pick_random_story()
+
+    def pick_random_story(self):
+        """Choose one notice at random, avoiding an immediate repeat."""
+        if not self.notices:
+            self.current_story = ""
+            return
+        if len(self.notices) == 1:
+            self.current_story = self.notices[0]
+            return
+        choices = [n for n in self.notices if n != self.current_story]
+        self.current_story = random.choice(choices)
+        self.current_pos = 0
 
     def ticker_text(self):
-        return "  ||  ".join(
-            f"{index + 1}. {notice}"
-            for index, notice in enumerate(self.notices)
-        )
+        """Return the selected story with spacing for continuous scrolling."""
+        if not self.current_story:
+            return ""
+        return f"{self.current_story}   ***   "
 
     @staticmethod
     def ticker_loop_text(notices):
         """Return text with a separator for seamless looping."""
-        result = "  ||  ".join(
-            f"{index + 1}. {notice}"
-            for index, notice in enumerate(notices)
-        )
+        result = "  ||  ".join(f"{index + 1}. {notice}" for index, notice in enumerate(notices))
         return result + "   ***   "
 
     def update(self):
         """Advance the scroll position with seamless wrapping."""
-        full_text = self.ticker_loop_text(self.notices)
+        full_text = self.ticker_text()
         if full_text:
             self.current_pos = (self.current_pos + self.scroll_speed) % len(full_text)
 
@@ -87,15 +103,17 @@ class NewsBanner:
         except curses.error:
             pass
 
-        loop_text = self.ticker_loop_text(self.notices)
-        full_stream = loop_text * 3
-        start = min(self.current_pos % len(loop_text), len(loop_text) - content_width)
-        display_text = full_stream[start:start + content_width]
-        if display_text:
-            self._safe_addnstr(
-                window, self.row + 2, self.left,
-                display_text, content_width
-            )
+        text = self.ticker_text()
+        if text:
+            width = len(text)
+            scroll_stream = text * 2
+            start = self.current_pos % width
+            display_text = scroll_stream[start:start + content_width]
+            if display_text:
+                self._safe_addnstr(
+                    window, self.row + 2, self.left,
+                    display_text, content_width
+                )
         else:
             self._safe_addnstr(
                 window, self.row + 2, self.left,
