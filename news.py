@@ -3,11 +3,8 @@ import random
 
 
 DEFAULT_NOTICES = [
-    "Market opens cautiously after overnight trading",
-    "Bombs R Us announces a surprise product launch",
-    "Local cat rescued from tree; shares remain unchanged",
-    "Analysts recommend watching the medical sector",
-    "Cows go moo",
+    "No news today oopsy",
+    "How is there no news??",
 ]
 
 
